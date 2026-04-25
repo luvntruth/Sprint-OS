@@ -51,6 +51,12 @@ button.danger.subtle { color: rgba(255,255,255,.62); background: rgba(255,255,25
 .nav-item.active span { color: #fff; }
 .sidebar-footer { margin-top: auto; padding: 1rem; border-radius: 18px; background: rgba(255,255,255,.06); }
 .sidebar-footer p { margin: 0 0 .8rem; color: rgba(255,255,255,.72); font-size: .9rem; line-height: 1.5; }
+.full { width: 100%; margin-top: .45rem; }
+.mode-card { border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: .85rem; background: rgba(255,255,255,.06); }
+.mode-card strong { display: block; font-size: .86rem; }
+.mode-card p { margin: .28rem 0 0; color: rgba(255,255,255,.62); font-size: .78rem; line-height: 1.45; }
+.mode-card.public { background: rgba(19,138,91,.14); border-color: rgba(82,200,146,.25); }
+.mode-card.admin { background: rgba(92,75,219,.16); border-color: rgba(160,149,255,.25); }
 
 .workspace { min-width: 0; padding: 1.4rem clamp(1rem, 3vw, 2.4rem) 3rem; }
 .workspace-header { min-height: 132px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
