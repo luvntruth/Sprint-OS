@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# Sprint OS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AX x HR 실천 모임 1기 운영을 위한 프로젝트 기반 실천 커뮤니티 OS입니다.
 
-Currently, two official plugins are available:
+## Purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Sprint OS는 단순 프로젝트 관리툴이 아니라, 문턱장이 사람들의 실제 문제를 프로젝트로 전환해 돕는 방식을 훈련하고 축적하기 위한 운영 도구입니다.
 
-## React Compiler
+핵심 철학:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 조직은 **우리답게** 일해야 한다.
+- 개인은 **자기답게** 일해야 한다.
+- 목표 달성은 의지만이 아니라 구조화된 시스템과 대화에서 나온다.
+- AI는 대화를 대체하지 않고, 실행과 회고를 더 잘 일어나게 하는 증폭 장치다.
 
-## Expanding the ESLint configuration
+## Method
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+OURS Method:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **O — Own the Problem**: 문제를 자기 언어로 소유한다.
+- **U — Understand the System**: 문제가 발생하는 시스템을 이해한다.
+- **R — Run a Small Project**: 작고 실제적인 프로젝트로 실험한다.
+- **S — Share, Reflect, Systemize**: 공유하고 회고하며 반복 가능한 시스템으로 만든다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Dashboard: 스프린트 운영 현황
+- Shared Room: 참가자와 함께 보는 진행상황 화면
+- Project Lab: OURS Method 기반 참가자별 프로젝트 관리
+- Cockpit: 운영자/컨설턴트 전용 진단·질문·개입 기록
+- Method: Humanistic 방법론 라이브러리
+- Participants: 참가자 상세 정보와 설문 원문 관리
+- Analysis: 로키/AI 분석 프롬프트 생성 및 결과 저장
+- Tickets: 단계별 실행 티켓 관리
+- Reflection: 운영자 회고 및 다음 액션 정리
+- Export: Obsidian용 Markdown export
+
+## Local Development
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+http://127.0.0.1:5173
 ```
+
+## Build
+
+```bash
+npm run build
+```
+
+Output directory:
+
+```text
+dist
+```
+
+## Vercel Deployment
+
+Recommended Vercel settings:
+
+- Framework Preset: `Vite`
+- Install Command: `npm install`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Root Directory: `./`
+
+## Current Scope
+
+This is MVP 0.1/0.1.5:
+
+- single-user/local-first
+- browser localStorage persistence
+- no login
+- no external AI API
+- semi-automatic AI workflow through copy-paste prompts
+
+Future versions may add Supabase/Firebase, participant login, AI API integration, Paperclip issue sync, and Obsidian direct export.
