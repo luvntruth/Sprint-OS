@@ -88,8 +88,8 @@ function App() {
         </div>
 
         <div className={mode === 'public' ? 'mode-card public' : 'mode-card admin'}>
-          <strong>{mode === 'public' ? '교육생용 · 보기 전용' : '문턱장용 · 운영 콘솔'}</strong>
-          <p>{mode === 'public' ? '현황판, 교육생 화면, 할 일만 보입니다. 입력/진단/회고 메뉴는 숨깁니다. 보안 권한이 아닌 화면 구분입니다.' : '데이터 입력, 진단, 분석, 회고, 방법론 축적까지 관리합니다. 실제 권한 보호는 아직 없습니다.'}</p>
+          <strong>{mode === 'public' ? '함께 보는 화면 · 보기 전용' : '문턱장용 · 운영 콘솔'}</strong>
+          <p>{mode === 'public' ? '진행상황과 다음 작은 행동만 함께 확인합니다. 운영자 기록과 진단 메모는 보이지 않습니다.' : '데이터 입력, 진단, 분석, 회고, 방법론 축적까지 관리합니다. 실제 권한 보호는 아직 없습니다.'}</p>
         </div>
 
         <nav className="side-nav" aria-label="Primary navigation">
@@ -113,7 +113,7 @@ function App() {
               <button className="danger subtle full" onClick={reset}>개발용 초기화</button>
             </>
           )}
-          {mode === 'public' && <small className="mode-note">교육생용 화면입니다. 운영자 입력/진단 메뉴는 표시하지 않습니다. 단, 로그인 기반 보안은 아직 없습니다.</small>}
+          {mode === 'public' && <small className="mode-note">함께 보는 진행 화면입니다. 민감한 정보나 운영자 메모는 이 화면에 적지 않습니다.</small>}
         </div>
       </aside>
 

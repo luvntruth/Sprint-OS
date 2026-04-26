@@ -33,11 +33,11 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
   const dashboardProgressPercent = ticketCounts.total === 0 ? 0 : Math.round((ticketCounts.done / ticketCounts.total) * 100);
   const publicNextAction = {
     priority: 'high',
-    title: state.sprint.currentStage === 'prep' ? '사전 설문 응답과 문제 후보 준비' : '내 프로젝트 카드에서 다음 액션 확인',
+    title: state.sprint.currentStage === 'prep' ? '사전 질문에 답하고 내 문제 후보 떠올리기' : '내 카드에서 다음 작은 행동 확인하기',
     description:
       state.sprint.currentStage === 'prep'
-        ? '교육생은 첫 모임 전 설문에 답하고, 내가 다루고 싶은 현업 문제 상황 예시 1~2개를 준비합니다.'
-        : '교육생 화면에서 내 문제, 결과물 후보, 현재 상황, 다음 액션을 확인하고 다음 모임 전 작은 행동 하나를 실행합니다.',
+        ? '첫 모임 전, 요즘 일에서 반복해서 막히는 장면 1~2개만 편하게 적어오면 됩니다. 완성된 답보다 실제 장면이 더 중요합니다.'
+        : '내 프로젝트 카드에서 지금 단계와 다음 행동을 확인하고, 다음 만남 전 작게 한 번 시도해봅니다.',
   };
   const updateSprint = (patch: Partial<typeof state.sprint>) => {
     setState({ ...state, sprint: { ...state.sprint, ...patch } });
@@ -143,7 +143,7 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
 
         <section className="panel action-panel">
           <p className="eyebrow">Role Clarity</p>
-          <h2>{mode === 'admin' ? '문턱장이 볼 것' : '교육생이 볼 것'}</h2>
+          <h2>{mode === 'admin' ? '문턱장이 볼 것' : '오늘 같이 확인할 것'}</h2>
           {mode === 'admin' ? (
             <ul className="clarity-list">
               <li><strong>운영:</strong> 티켓 탭에서 단계별 실행 상태를 갱신합니다.</li>
@@ -152,9 +152,9 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
             </ul>
           ) : (
             <ul className="clarity-list">
-              <li><strong>내 문제:</strong> 내가 다루는 문제 한 문장을 확인합니다.</li>
-              <li><strong>내 결과물:</strong> 3주 안에 만들 v0.1 산출물을 확인합니다.</li>
-              <li><strong>다음 행동:</strong> 오늘 내가 해야 할 작은 행동 하나를 확인합니다.</li>
+              <li><strong>내 문제:</strong> 요즘 일에서 반복해서 막히는 장면을 한 문장으로 확인합니다.</li>
+              <li><strong>내 결과물:</strong> 3주 안에 작게 만들어볼 v0.1 산출물을 확인합니다.</li>
+              <li><strong>다음 행동:</strong> 다음 만남 전 내가 해볼 작은 시도 하나를 정합니다.</li>
             </ul>
           )}
         </section>

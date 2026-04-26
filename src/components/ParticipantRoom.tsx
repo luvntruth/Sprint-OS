@@ -30,10 +30,10 @@ export function ParticipantRoom({ state, setState, readOnly = false }: Props) {
       <div className="command-hero public-hero slim-hero">
         <div>
           <p className="eyebrow">Shared Sprint Room</p>
-          <h1>{readOnly ? '교육생 공유 화면' : '공유룸 편집 화면'}</h1>
+          <h1>{readOnly ? '우리의 3주 실천방' : '공유룸 편집 화면'}</h1>
           <p>
-            참가자와 함께 보는 공간입니다. 각자의 문제, 결과물 후보, 현재 상태, 다음 액션만 확인합니다.
-            회사명/개인명/민감정보는 적지 않습니다.
+            서로의 실제 문제를 안전하게 꺼내고, 3주 안에 작게 실험할 방향을 함께 확인하는 공간입니다.
+            민감한 회사명/개인명은 적지 않고, 필요한 내용만 간단히 공유합니다.
           </p>
         </div>
         <div className="hero-now-card">
@@ -44,11 +44,11 @@ export function ParticipantRoom({ state, setState, readOnly = false }: Props) {
       </div>
 
       <div className="notice room-notice">
-        <strong>오늘 이 화면에서 확인할 것</strong>
+        <strong>오늘 함께 확인할 것</strong>
         <ul>
           <li>나는 지금 OURS 어느 단계에 있는가?</li>
-          <li>3주 안에 만들 작은 결과물은 무엇인가?</li>
-          <li>다음 모임 전 내가 할 작은 행동은 무엇인가?</li>
+          <li>3주 안에 작게 만들어보거나 써볼 결과물은 무엇인가?</li>
+          <li>다음 모임 전 내가 해볼 작은 행동은 무엇인가?</li>
         </ul>
       </div>
 
