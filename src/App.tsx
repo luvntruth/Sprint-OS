@@ -13,6 +13,7 @@ import { ParticipantRoom } from './components/ParticipantRoom';
 import { ProjectLab } from './components/ProjectLab';
 import { FacilitatorCockpit } from './components/FacilitatorCockpit';
 import { MethodLibrary } from './components/MethodLibrary';
+import { stageMeta } from './uiModel';
 
 type Tab =
   | 'dashboard'
@@ -79,10 +80,10 @@ function App() {
     <div className={`app-shell ${mode === 'public' ? 'public-mode' : 'admin-mode'}`}>
       <aside className="sidebar">
         <div className="brand-block">
-          <div className="brand-mark">S</div>
+          <div className="brand-mark">↯</div>
           <div>
             <strong>Sprint OS</strong>
-            <span>{mode === 'public' ? '교육생 공유 화면' : '운영자 콘솔'}</span>
+            <span>{mode === 'public' ? 'Practice Room' : 'Operator Cockpit'}</span>
           </div>
         </div>
 
@@ -125,7 +126,7 @@ function App() {
           </div>
           <div className="stage-pill">
             <span>{mode === 'public' ? '공유 모드' : '운영자 모드'}</span>
-            <strong>{state.sprint.currentStage}</strong>
+            <strong>{stageMeta[state.sprint.currentStage]?.shortLabel ?? state.sprint.currentStage}</strong>
           </div>
         </header>
 
