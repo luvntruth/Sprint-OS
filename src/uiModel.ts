@@ -1,4 +1,5 @@
 import type { AppState, Participant, Stage, Ticket } from './types';
+import { nextActionableItem, overallProgress } from './lib/checklists';
 
 export const stageOrder: Stage[] = ['prep', 'week1', 'week2', 'week3', 'wrapup'];
 
@@ -75,17 +76,17 @@ export function getNextTicket(tickets: Ticket[], stage: Stage) {
 }
 
 export function getParticipantStatus(participant: Participant) {
-  if (participant.lifecycle.caseNote || participant.lifecycle.fieldTest) return '현업 테스트';
-  if (participant.lifecycle.smallProject || participant.outputCandidate) return 'v0.1 제작';
-  if (participant.problemStatement) return '문제 정의';
-  return '대기';
+  const checklist = participant.checklist ?? {};
+  const { done, total, ratio } = overallProgress(checklist);
+  if (ratio === 1) return '완료';
+  if (done === 0 && !participant.problemStatement) return '대기';
+  return `진행 중 ${done}/${total}`;
 }
 
 export function getParticipantNextAction(participant: Participant) {
   if (participant.nextAction) return participant.nextAction;
-  if (!participant.problemStatement) return '사전 설문 응답과 문제 후보를 입력합니다.';
-  if (!participant.outputCandidate) return '3주 안에 만들 작은 결과물 후보를 정합니다.';
-  if (!participant.lifecycle.fieldTest) return 'v0.1을 현업에서 한 번 써볼 테스트 계획을 정합니다.';
+  const next = nextActionableItem(participant.checklist ?? {});
+  if (next) return `OURS ${next.phase}: ${next.label}`;
   return 'Before/After Case Note와 배운 점을 정리합니다.';
 }
 

@@ -39,6 +39,7 @@ const participants: Participant[] = [
       missedQuestions: '',
       interventionLog: '',
     },
+    checklist: {},
   },
   ...['P-1', 'P-2', 'P-3'].map((id) => ({
     id,
@@ -76,6 +77,7 @@ const participants: Participant[] = [
       missedQuestions: '',
       interventionLog: '',
     },
+    checklist: {},
   })),
 ];
 

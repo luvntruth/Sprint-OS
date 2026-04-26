@@ -5,7 +5,23 @@ type MaybeTicket = {
   status?: unknown;
   generatedBy?: unknown;
 };
-type MaybeStateWithTickets = { tickets?: MaybeTicket[] };
+type MaybeParticipant = {
+  checklist?: unknown;
+};
+type MaybeStateWithTickets = { tickets?: MaybeTicket[]; participants?: MaybeParticipant[] };
+
+function ensureParticipantChecklist<T>(saved: T): T {
+  const savedState = saved as MaybeStateWithTickets;
+  if (!Array.isArray(savedState.participants)) return saved;
+  let mutated = false;
+  const participants = savedState.participants.map((p) => {
+    if (p && typeof p === 'object' && p.checklist && typeof p.checklist === 'object') return p;
+    mutated = true;
+    return { ...p, checklist: {} };
+  });
+  if (!mutated) return saved;
+  return { ...(saved as object), participants } as T;
+}
 
 function mergeTemplateTickets<T>(saved: T, fallback: T): T {
   const savedState = saved as MaybeStateWithTickets;
@@ -32,7 +48,7 @@ export function loadState<T>(fallback: T): T {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return fallback;
-    return mergeTemplateTickets(JSON.parse(raw) as T, fallback);
+    return ensureParticipantChecklist(mergeTemplateTickets(JSON.parse(raw) as T, fallback));
   } catch {
     return fallback;
   }

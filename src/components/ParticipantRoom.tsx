@@ -1,5 +1,7 @@
-import type { AppState, Participant } from '../types';
+import type { AppState, ChecklistState, Participant } from '../types';
 import { getParticipantNextAction, getParticipantStatus } from '../uiModel';
+import { OursProgress, PhasePill } from './OursProgress';
+import { currentPhase, nextActionableItem } from '../lib/checklists';
 
 interface Props {
   state: AppState;
@@ -14,6 +16,13 @@ export function ParticipantRoom({ state, setState, readOnly = false }: Props) {
       ...state,
       participants: state.participants.map((p) => (p.id === id ? { ...p, ...patch } : p)),
     });
+  };
+
+  const toggleCheck = (participant: Participant, itemId: string) => {
+    const next: ChecklistState = { ...(participant.checklist ?? {}) };
+    if (next[itemId]) delete next[itemId];
+    else next[itemId] = true;
+    update(participant.id, { checklist: next });
   };
 
   return (
@@ -37,47 +46,86 @@ export function ParticipantRoom({ state, setState, readOnly = false }: Props) {
       <div className="notice room-notice">
         <strong>오늘 이 화면에서 확인할 것</strong>
         <ul>
-          <li>나는 지금 어떤 문제를 다루고 있는가?</li>
+          <li>나는 지금 OURS 어느 단계에 있는가?</li>
           <li>3주 안에 만들 작은 결과물은 무엇인가?</li>
-          <li>다음 모임 전 내가 해야 할 행동 하나는 무엇인가?</li>
+          <li>다음 모임 전 내가 할 작은 행동은 무엇인가?</li>
         </ul>
       </div>
 
       <div className="participant-progress-grid public-cards">
-        {state.participants.filter((participant) => !readOnly || participant.id !== 'P-0').map((p) => (
-          <article className="participant-progress-card public-card" key={p.id}>
-            <div className="participant-line">
-              <span className="badge">{p.id}</span>
-              <div>
-                {readOnly ? (
-                  <strong>{p.displayName}</strong>
-                ) : (
-                  <input value={p.displayName} onChange={(e) => update(p.id, { displayName: e.target.value })} aria-label={`${p.id} 이름`} />
-                )}
-                <small>{p.role || '역할/맥락 미입력'}</small>
+        {state.participants.filter((participant) => !readOnly || participant.id !== 'P-0').map((p) => {
+          const checklist = p.checklist ?? {};
+          const here = currentPhase(checklist);
+          const nextItem = nextActionableItem(checklist);
+          return (
+            <article className="participant-progress-card public-card" key={p.id}>
+              <div className="participant-line">
+                <span className="badge">{p.id}</span>
+                <div>
+                  {readOnly ? (
+                    <strong>{p.displayName}</strong>
+                  ) : (
+                    <input
+                      value={p.displayName}
+                      onChange={(e) => update(p.id, { displayName: e.target.value })}
+                      aria-label={`${p.id} 이름`}
+                    />
+                  )}
+                  <small>{p.role || '역할/맥락 미입력'}</small>
+                </div>
+                <PhasePill phase={here} />
+                <em>{getParticipantStatus(p)}</em>
               </div>
-              <em>{getParticipantStatus(p)}</em>
-            </div>
 
-            {readOnly ? (
-              <dl>
-                <div><dt>문제</dt><dd>{p.problemStatement || '첫 모임에서 함께 정리합니다.'}</dd></div>
-                <div><dt>3주 결과물</dt><dd>{p.outputCandidate || '아직 정하지 않았습니다.'}</dd></div>
-                <div><dt>현재 상황</dt><dd>{p.currentProgress || '준비 중'}</dd></div>
-                <div><dt>다음 액션</dt><dd>{getParticipantNextAction(p)}</dd></div>
-              </dl>
-            ) : (
-              <div className="room-edit-grid">
-                <label>역할 / 맥락<input value={p.role} onChange={(e) => update(p.id, { role: e.target.value })} /></label>
-                <label>내가 다룰 문제 한 문장<textarea value={p.problemStatement} onChange={(e) => update(p.id, { problemStatement: e.target.value })} placeholder="나는 [상황]에서 [반복되는 문제]를 겪고 있다." /></label>
-                <label>3주 후 만들고 싶은 결과물<textarea value={p.outputCandidate} onChange={(e) => update(p.id, { outputCandidate: e.target.value })} placeholder="프롬프트, 체크리스트, 챗봇, 문서 템플릿 등" /></label>
-                <label>현재 진행상황<textarea value={p.currentProgress} onChange={(e) => update(p.id, { currentProgress: e.target.value })} placeholder="예: 문제 후보 작성 완료 / 결과물 범위 줄이는 중" /></label>
-                <label>다음 액션<textarea value={p.nextAction} onChange={(e) => update(p.id, { nextAction: e.target.value })} placeholder="예: 첫 모임 전 문제 상황 예시 2개 정리" /></label>
-                <label>참가자 업데이트 / 메모<textarea value={p.participantUpdate} onChange={(e) => update(p.id, { participantUpdate: e.target.value })} placeholder="참가자가 직접 남기는 짧은 업데이트" /></label>
-              </div>
-            )}
-          </article>
-        ))}
+              <OursProgress checklist={checklist} variant="compact" />
+
+              {nextItem ? (
+                <p className="next-check-hint">
+                  <span className="label">다음 체크</span>
+                  <strong>{nextItem.label}</strong>
+                  {nextItem.helper ? <small>{nextItem.helper}</small> : null}
+                </p>
+              ) : (
+                <p className="next-check-hint done">
+                  <strong>OURS 4단계 모두 완료 — 회고와 케이스 정리만 남았습니다.</strong>
+                </p>
+              )}
+
+              {readOnly ? (
+                <dl>
+                  <div><dt>문제</dt><dd>{p.problemStatement || '첫 모임에서 함께 정리합니다.'}</dd></div>
+                  <div><dt>3주 결과물</dt><dd>{p.outputCandidate || '아직 정하지 않았습니다.'}</dd></div>
+                  <div><dt>현재 상황</dt><dd>{p.currentProgress || '준비 중'}</dd></div>
+                  <div><dt>다음 액션</dt><dd>{getParticipantNextAction(p)}</dd></div>
+                </dl>
+              ) : (
+                <>
+                  <div className="room-edit-grid">
+                    <label>역할 / 맥락<input value={p.role} onChange={(e) => update(p.id, { role: e.target.value })} /></label>
+                    <label>내가 다룰 문제 한 문장<textarea value={p.problemStatement} onChange={(e) => update(p.id, { problemStatement: e.target.value })} placeholder="나는 [상황]에서 [반복되는 문제]를 겪고 있다." /></label>
+                    <label>3주 후 만들고 싶은 결과물<textarea value={p.outputCandidate} onChange={(e) => update(p.id, { outputCandidate: e.target.value })} placeholder="프롬프트, 체크리스트, 챗봇, 문서 템플릿 등" /></label>
+                    <label>현재 진행상황<textarea value={p.currentProgress} onChange={(e) => update(p.id, { currentProgress: e.target.value })} placeholder="예: 문제 후보 작성 완료 / 결과물 범위 줄이는 중" /></label>
+                    <label>다음 액션<textarea value={p.nextAction} onChange={(e) => update(p.id, { nextAction: e.target.value })} placeholder="예: 첫 모임 전 문제 상황 예시 2개 정리" /></label>
+                    <label>참가자 업데이트 / 메모<textarea value={p.participantUpdate} onChange={(e) => update(p.id, { participantUpdate: e.target.value })} placeholder="참가자가 직접 남기는 짧은 업데이트" /></label>
+                  </div>
+
+                  {nextItem ? (
+                    <div className="quick-check-row">
+                      <button
+                        type="button"
+                        className="subtle"
+                        onClick={() => toggleCheck(p, nextItem.id)}
+                      >
+                        ✓ "{nextItem.label}" 체크하기
+                      </button>
+                      <small>운영자가 참가자와 대화하며 함께 체크합니다. 상세 체크는 프로젝트 랩에서.</small>
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

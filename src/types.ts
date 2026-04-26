@@ -2,6 +2,16 @@ export type Stage = 'prep' | 'week1' | 'week2' | 'week3' | 'wrapup';
 export type TicketStatus = 'todo' | 'doing' | 'done' | 'blocked';
 export type TicketOwner = 'operator' | 'participant' | 'ai';
 export type AnalysisType = 'survey' | 'reflection' | 'weekly-review' | 'final-method';
+export type OursPhase = 'O' | 'U' | 'R' | 'S';
+
+export interface ChecklistItem {
+  id: string;
+  phase: OursPhase;
+  label: string;
+  helper?: string;
+}
+
+export type ChecklistState = Record<string, boolean>;
 
 export interface Sprint {
   id: string;
@@ -53,6 +63,7 @@ export interface Participant {
   participantUpdate: string;
   lifecycle: ProjectLifecycle;
   facilitatorNote: FacilitatorNote;
+  checklist: ChecklistState;
 }
 
 

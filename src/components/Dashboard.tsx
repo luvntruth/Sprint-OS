@@ -8,6 +8,10 @@ import {
   stageMeta,
   stageOrder,
 } from '../uiModel';
+import { Timeline } from './Timeline';
+import { OursProgress, PhasePill } from './OursProgress';
+import { currentPhase, overallProgress } from '../lib/checklists';
+import { Onboarding } from './Onboarding';
 
 interface Props {
   state: AppState;
@@ -17,6 +21,12 @@ interface Props {
 
 export function Dashboard({ state, setState, mode = 'admin' }: Props) {
   const summary = getPublicSummary(state);
+  const visibleParticipants = state.participants.filter((p) => mode === 'admin' || p.id !== 'P-0');
+  const cohortOursRatio =
+    visibleParticipants.length === 0
+      ? 0
+      : visibleParticipants.reduce((sum, p) => sum + overallProgress(p.checklist ?? {}).ratio, 0) /
+        visibleParticipants.length;
   const participantTickets = state.tickets.filter((ticket) => ticket.owner === 'participant');
   const dashboardTickets = mode === 'public' ? participantTickets : state.tickets;
   const ticketCounts = getTicketCounts(dashboardTickets);
@@ -35,6 +45,7 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
 
   return (
     <section className="dashboard-page">
+      <Onboarding mode={mode} />
       <div className={mode === 'admin' ? 'command-hero admin-hero' : 'command-hero public-hero'}>
         <div>
           <p className="eyebrow">{mode === 'admin' ? 'Operator Command Center' : 'Participant Home'}</p>
@@ -46,6 +57,17 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
           <strong>{summary.stageMeta.label}</strong>
           <small>{summary.stageMeta.purpose}</small>
         </div>
+      </div>
+
+      <div className="panel compact-panel timeline-panel">
+        <div className="section-head clean-head">
+          <div>
+            <p className="eyebrow">Sprint Timeline</p>
+            <h2>오늘 우리는 어디에 있는가</h2>
+          </div>
+          <span>코호트 평균 OURS {Math.round(cohortOursRatio * 100)}%</span>
+        </div>
+        <Timeline sprint={state.sprint} />
       </div>
 
       <div className="progress-shell panel compact-panel">
@@ -148,32 +170,38 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
         </div>
 
         <div className="participant-progress-grid">
-          {state.participants.filter((participant) => mode === 'admin' || participant.id !== 'P-0').map((participant) => (
-            <article className="participant-progress-card" key={participant.id}>
-              <div className="participant-line">
-                <span className="badge">{participant.id}</span>
-                <div>
-                  <strong>{participant.displayName}</strong>
-                  <small>{participant.role || '역할/맥락 미입력'}</small>
+          {visibleParticipants.map((participant) => {
+            const checklist = participant.checklist ?? {};
+            const here = currentPhase(checklist);
+            return (
+              <article className="participant-progress-card" key={participant.id}>
+                <div className="participant-line">
+                  <span className="badge">{participant.id}</span>
+                  <div>
+                    <strong>{participant.displayName}</strong>
+                    <small>{participant.role || '역할/맥락 미입력'}</small>
+                  </div>
+                  <PhasePill phase={here} />
+                  <em>{getParticipantStatus(participant)}</em>
                 </div>
-                <em>{getParticipantStatus(participant)}</em>
-              </div>
-              <dl>
-                <div>
-                  <dt>문제</dt>
-                  <dd>{participant.problemStatement || '아직 문제 정의 전'}</dd>
-                </div>
-                <div>
-                  <dt>결과물</dt>
-                  <dd>{participant.outputCandidate || 'v0.1 결과물 후보 미정'}</dd>
-                </div>
-                <div>
-                  <dt>다음 액션</dt>
-                  <dd>{getParticipantNextAction(participant)}</dd>
-                </div>
-              </dl>
-            </article>
-          ))}
+                <OursProgress checklist={checklist} variant="compact" />
+                <dl>
+                  <div>
+                    <dt>문제</dt>
+                    <dd>{participant.problemStatement || '아직 문제 정의 전'}</dd>
+                  </div>
+                  <div>
+                    <dt>결과물</dt>
+                    <dd>{participant.outputCandidate || 'v0.1 결과물 후보 미정'}</dd>
+                  </div>
+                  <div>
+                    <dt>다음 액션</dt>
+                    <dd>{getParticipantNextAction(participant)}</dd>
+                  </div>
+                </dl>
+              </article>
+            );
+          })}
         </div>
       </section>
 

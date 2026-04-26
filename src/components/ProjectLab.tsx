@@ -1,56 +1,137 @@
-import type { AppState, Participant, ProjectLifecycle } from '../types';
+import type { AppState, ChecklistState, OursPhase, Participant, ProjectLifecycle } from '../types';
+import {
+  OURS_CHECKLIST,
+  OURS_PHASES,
+  checklistByPhase,
+  currentPhase,
+  isChecked,
+  phaseProgress,
+} from '../lib/checklists';
+import { OursProgress, PhasePill } from './OursProgress';
 
 interface Props {
   state: AppState;
   setState: (state: AppState) => void;
 }
 
-const lifecycleFields: Array<[keyof ProjectLifecycle, string, string]> = [
-  ['ownProblem', 'O — Own the Problem', '내가 중요하게 느끼는 문제를 자기 언어로 정의합니다.'],
-  ['understandSystem', 'U — Understand the System', '문제가 반복되는 사람/흐름/정보/대화/도구/목표 시스템을 이해합니다.'],
-  ['smallProject', 'R — Run a Small Project', '3주 안에 현장에서 한 번 써볼 작은 프로젝트로 줄입니다.'],
-  ['shareReflectSystemize', 'S — Share, Reflect, Systemize', '공유·회고·시스템화하여 다음에도 반복 가능한 구조로 남깁니다.'],
-  ['goalConversation', '목표 설정 대화', '3주 뒤 어떤 변화가 있으면 충분한지 합의합니다.'],
-  ['strategyConversation', '전략 수립 대화', '어디까지 줄이고, AI를 어디에 쓸지 정합니다.'],
-  ['retrospectiveConversation', '회고 대화', '무엇이 달라졌고 다음에 무엇을 반복할지 정리합니다.'],
-  ['fieldTest', '현업 테스트', '실제 맥락에서 한 번 써본 기록을 남깁니다.'],
-  ['caseNote', 'Case Note', 'Before / Project / Conversation / After / Learning / System을 정리합니다.'],
-];
+const lifecycleByPhase: Record<OursPhase, Array<[keyof ProjectLifecycle, string]>> = {
+  O: [
+    ['ownProblem', '문제 자기 언어로 정의'],
+    ['goalConversation', '목표 설정 대화'],
+  ],
+  U: [['understandSystem', '시스템 이해 (사람·흐름·정보·도구·대화·목표)']],
+  R: [
+    ['smallProject', '3주 안 작은 프로젝트'],
+    ['strategyConversation', '전략 수립 대화'],
+    ['fieldTest', '현업 테스트 기록'],
+  ],
+  S: [
+    ['shareReflectSystemize', '공유·회고·시스템화'],
+    ['retrospectiveConversation', '회고 대화'],
+    ['caseNote', 'Case Note (Before/Project/Conversation/After/Learning/System)'],
+  ],
+};
 
 export function ProjectLab({ state, setState }: Props) {
   const update = (id: string, patch: Partial<Participant>) => {
-    setState({ ...state, participants: state.participants.map((p) => p.id === id ? { ...p, ...patch } : p) });
+    setState({
+      ...state,
+      participants: state.participants.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+    });
   };
 
   const updateLifecycle = (participant: Participant, key: keyof ProjectLifecycle, value: string) => {
     update(participant.id, { lifecycle: { ...participant.lifecycle, [key]: value } });
   };
 
+  const toggleCheck = (participant: Participant, itemId: string) => {
+    const next: ChecklistState = { ...(participant.checklist ?? {}) };
+    if (next[itemId]) delete next[itemId];
+    else next[itemId] = true;
+    update(participant.id, { checklist: next });
+  };
+
   return (
-    <section className="panel">
+    <section className="panel project-lab">
       <div className="hero-card soft">
         <p className="eyebrow">Project Lab</p>
         <h1>OURS Method 프로젝트 랩</h1>
-        <p>각자의 문제를 O-U-R-S 흐름으로 프로젝트화합니다. 목표는 완벽한 산출물이 아니라 자기 문제를 AI와 대화를 통해 직접 해결해보는 경험입니다.</p>
+        <p>
+          체크리스트로 단계별 완료 신호를 남기고, 자유 메모로 맥락을 보강합니다. 운영자가 참가자와 대화하며 함께 체크합니다.
+        </p>
       </div>
 
-      {state.participants.map((participant) => (
-        <details className="participant" key={participant.id} open={participant.id === 'P-0'}>
-          <summary>{participant.id} · {participant.displayName}</summary>
-          <div className="grid two">
-            {lifecycleFields.map(([key, label, help]) => (
-              <label key={key} className="wide">
-                {label}
-                <small>{help}</small>
-                <textarea
-                  value={participant.lifecycle[key]}
-                  onChange={(event) => updateLifecycle(participant, key, event.target.value)}
-                />
-              </label>
-            ))}
-          </div>
-        </details>
-      ))}
+      {state.participants.length === 0 ? (
+        <div className="empty-state">
+          <p>참가자가 없습니다. 데이터 탭에서 추가하세요.</p>
+        </div>
+      ) : null}
+
+      {state.participants.map((participant) => {
+        const checklist = participant.checklist ?? {};
+        return (
+          <details className="participant project-lab-card" key={participant.id} open={participant.id === 'P-0'}>
+            <summary>
+              <span className="participant-id">{participant.id} · {participant.displayName}</span>
+              <PhasePill phase={currentPhase(checklist)} />
+              <span className="lab-progress-mini">
+                {Object.values(checklist).filter(Boolean).length}/{OURS_CHECKLIST.length}
+              </span>
+            </summary>
+
+            <OursProgress checklist={checklist} variant="detailed" />
+
+            {OURS_PHASES.map(({ phase, label, tagline }) => {
+              const items = checklistByPhase(phase);
+              const { done, total, ratio } = phaseProgress(checklist, phase);
+              const memos = lifecycleByPhase[phase];
+              return (
+                <section key={phase} className={`phase-block phase-block-${phase.toLowerCase()}`}>
+                  <header className="phase-block-head">
+                    <div>
+                      <strong>{phase} — {label}</strong>
+                      <small>{tagline}</small>
+                    </div>
+                    <span className="phase-block-count">
+                      {done}/{total} · {Math.round(ratio * 100)}%
+                    </span>
+                  </header>
+
+                  <ul className="phase-checklist">
+                    {items.map((item) => (
+                      <li key={item.id}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={isChecked(checklist, item.id)}
+                            onChange={() => toggleCheck(participant, item.id)}
+                          />
+                          <span>
+                            <strong>{item.label}</strong>
+                            {item.helper ? <small>{item.helper}</small> : null}
+                          </span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="phase-memos">
+                    {memos.map(([key, memoLabel]) => (
+                      <label key={key} className="wide">
+                        {memoLabel}
+                        <textarea
+                          value={participant.lifecycle[key]}
+                          onChange={(event) => updateLifecycle(participant, key, event.target.value)}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </details>
+        );
+      })}
     </section>
   );
 }
