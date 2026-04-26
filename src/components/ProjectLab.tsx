@@ -12,6 +12,7 @@ import { OursProgress, PhasePill } from './OursProgress';
 interface Props {
   state: AppState;
   setState: (state: AppState) => void;
+  readOnly?: boolean;
 }
 
 const lifecycleByPhase: Record<OursPhase, Array<[keyof ProjectLifecycle, string]>> = {
@@ -32,8 +33,9 @@ const lifecycleByPhase: Record<OursPhase, Array<[keyof ProjectLifecycle, string]
   ],
 };
 
-export function ProjectLab({ state, setState }: Props) {
+export function ProjectLab({ state, setState, readOnly = false }: Props) {
   const update = (id: string, patch: Partial<Participant>) => {
+    if (readOnly) return;
     setState({
       ...state,
       participants: state.participants.map((p) => (p.id === id ? { ...p, ...patch } : p)),
@@ -45,29 +47,35 @@ export function ProjectLab({ state, setState }: Props) {
   };
 
   const toggleCheck = (participant: Participant, itemId: string) => {
+    if (readOnly) return;
     const next: ChecklistState = { ...(participant.checklist ?? {}) };
     if (next[itemId]) delete next[itemId];
     else next[itemId] = true;
     update(participant.id, { checklist: next });
   };
 
+  const visibleParticipants = state.participants.filter((p) => !readOnly || p.id !== 'P-0');
+
   return (
     <section className="panel project-lab">
       <div className="hero-card soft">
         <p className="eyebrow">Project Lab</p>
-        <h1>OURS Method 프로젝트 랩</h1>
+        <h1>{readOnly ? 'OURS 단계, 우리는 어디쯤?' : 'OURS Method 프로젝트 랩'}</h1>
         <p>
-          체크리스트로 단계별 완료 신호를 남기고, 자유 메모로 맥락을 보강합니다. 운영자가 참가자와 대화하며 함께 체크합니다.
+          {readOnly
+            ? '답답함을 작게 다듬어가는 4단계 흐름입니다. 체크는 운영자가 함께 확인하며 채워드립니다.'
+            : '체크리스트로 단계별 완료 신호를 남기고, 자유 메모로 맥락을 보강합니다. 참가자와 대화하며 함께 체크합니다.'}
         </p>
       </div>
 
-      {state.participants.length === 0 ? (
+      {visibleParticipants.length === 0 ? (
         <div className="empty-state">
-          <p>참가자가 없습니다. 데이터 탭에서 추가하세요.</p>
+          <p>표시할 참가자가 없습니다.</p>
+          {!readOnly ? <small>데이터 탭에서 참가자를 추가하세요.</small> : null}
         </div>
       ) : null}
 
-      {state.participants.map((participant) => {
+      {visibleParticipants.map((participant) => {
         const checklist = participant.checklist ?? {};
         return (
           <details className="participant project-lab-card" key={participant.id} open={participant.id === 'P-0'}>
@@ -105,6 +113,7 @@ export function ProjectLab({ state, setState }: Props) {
                             type="checkbox"
                             checked={isChecked(checklist, item.id)}
                             onChange={() => toggleCheck(participant, item.id)}
+                            disabled={readOnly}
                           />
                           <span>
                             <strong>{item.label}</strong>
@@ -119,10 +128,16 @@ export function ProjectLab({ state, setState }: Props) {
                     {memos.map(([key, memoLabel]) => (
                       <label key={key} className="wide">
                         {memoLabel}
-                        <textarea
-                          value={participant.lifecycle[key]}
-                          onChange={(event) => updateLifecycle(participant, key, event.target.value)}
-                        />
+                        {readOnly ? (
+                          <p className="readonly-memo">
+                            {participant.lifecycle[key] || <em className="muted-em">아직 비어 있어요</em>}
+                          </p>
+                        ) : (
+                          <textarea
+                            value={participant.lifecycle[key]}
+                            onChange={(event) => updateLifecycle(participant, key, event.target.value)}
+                          />
+                        )}
                       </label>
                     ))}
                   </div>

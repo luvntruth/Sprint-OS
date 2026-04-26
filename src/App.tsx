@@ -13,6 +13,8 @@ import { ParticipantRoom } from './components/ParticipantRoom';
 import { ProjectLab } from './components/ProjectLab';
 import { FacilitatorCockpit } from './components/FacilitatorCockpit';
 import { MethodLibrary } from './components/MethodLibrary';
+import { OnePager } from './components/OnePager';
+import { OneOnOne } from './components/OneOnOne';
 import { stageMeta } from './uiModel';
 
 type Tab =
@@ -20,6 +22,8 @@ type Tab =
   | 'room'
   | 'projectLab'
   | 'tickets'
+  | 'onepager'
+  | 'oneonone'
   | 'cockpit'
   | 'method'
   | 'analysis'
@@ -30,14 +34,16 @@ type Tab =
 type ViewMode = 'public' | 'admin';
 
 const allTabs: Array<{ id: Tab; label: string; eyebrow: string; description: string; visibility: ViewMode | 'both' }> = [
-  { id: 'dashboard', label: '현황판', eyebrow: 'Overview', description: '진행상황과 다음 행동', visibility: 'both' },
-  { id: 'room', label: '교육생 화면', eyebrow: 'Shared', description: '참가자에게 보여줄 카드', visibility: 'both' },
-  { id: 'tickets', label: '할 일', eyebrow: 'Execution', description: '단계별 해야 할 일', visibility: 'both' },
-  { id: 'projectLab', label: '프로젝트 랩', eyebrow: 'OURS', description: '문제를 프로젝트로 전환', visibility: 'admin' },
+  { id: 'dashboard', label: '현황판', eyebrow: 'Overview', description: '오늘 우리가 어디에 있는지', visibility: 'both' },
+  { id: 'room', label: '우리 실천방', eyebrow: 'Shared', description: '함께 보는 우리 카드', visibility: 'both' },
+  { id: 'tickets', label: '이번 주 할 일', eyebrow: 'Execution', description: '단계별 작은 실행 목록', visibility: 'both' },
+  { id: 'projectLab', label: '프로젝트 랩', eyebrow: 'OURS', description: '답답함을 작게 다듬기', visibility: 'both' },
+  { id: 'onepager', label: '한 장 요약', eyebrow: 'Snapshot', description: '인쇄·PDF 가능한 한 페이지', visibility: 'both' },
+  { id: 'oneonone', label: '1on1 노트', eyebrow: 'Sync', description: '참가자별 통합 운영 노트', visibility: 'admin' },
   { id: 'cockpit', label: '운영실', eyebrow: 'Private', description: '운영자 진단/개입 기록', visibility: 'admin' },
   { id: 'method', label: '방법론', eyebrow: 'Library', description: 'Humanistic 방법론 축적', visibility: 'admin' },
-  { id: 'analysis', label: '분석', eyebrow: 'AI', description: '로키 분석 프롬프트', visibility: 'admin' },
-  { id: 'reflection', label: '회고', eyebrow: 'Learning', description: '컨설턴트 회고', visibility: 'admin' },
+  { id: 'analysis', label: '분석', eyebrow: 'AI', description: 'AI 분석 프롬프트', visibility: 'admin' },
+  { id: 'reflection', label: '회고', eyebrow: 'Learning', description: '운영자 회고 기록', visibility: 'admin' },
   { id: 'participants', label: '원본 데이터', eyebrow: 'Raw', description: '참가자 상세 입력', visibility: 'admin' },
   { id: 'export', label: '내보내기', eyebrow: 'Markdown', description: 'Obsidian 내보내기', visibility: 'admin' },
 ];
@@ -132,8 +138,10 @@ function App() {
 
         {tab === 'dashboard' && <Dashboard state={state} setState={setState} mode={mode} />}
         {tab === 'room' && <ParticipantRoom state={state} setState={setState} readOnly={mode === 'public'} />}
-        {mode === 'admin' && tab === 'projectLab' && <ProjectLab state={state} setState={setState} />}
+        {tab === 'projectLab' && <ProjectLab state={state} setState={setState} readOnly={mode === 'public'} />}
         {tab === 'tickets' && <TicketBoard state={state} setState={setState} readOnly={mode === 'public'} />}
+        {tab === 'onepager' && <OnePager state={state} mode={mode} />}
+        {mode === 'admin' && tab === 'oneonone' && <OneOnOne state={state} setState={setState} />}
         {mode === 'admin' && tab === 'cockpit' && <FacilitatorCockpit state={state} setState={setState} />}
         {mode === 'admin' && tab === 'method' && <MethodLibrary state={state} setState={setState} />}
         {mode === 'admin' && tab === 'analysis' && <AnalysisInbox state={state} setState={setState} />}

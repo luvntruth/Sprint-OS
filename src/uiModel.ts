@@ -7,31 +7,31 @@ export const stageMeta: Record<Stage, { label: string; shortLabel: string; purpo
   prep: {
     label: '0. 시작 전 준비',
     shortLabel: '준비',
-    purpose: '참가자 정보와 운영 환경을 준비합니다.',
+    purpose: '참가자 정보와 운영 환경을 가볍게 준비합니다.',
     outcome: '설문, 링크, 참가자 카드, 첫 모임 진행안이 준비된 상태',
   },
   week1: {
-    label: '1주차. 문제 정의',
-    shortLabel: '문제 정의',
-    purpose: '각자의 현업 문제를 한 문장과 작은 프로젝트 후보로 바꿉니다.',
-    outcome: 'Problem Statement, v0.1 결과물 후보, 성공 기준',
+    label: '1주차. 답답함 정리',
+    shortLabel: '답답함 정리',
+    purpose: '각자의 답답한 상황을 한 문장과 작게 만들어볼 결과물 후보로 다듬습니다.',
+    outcome: '답답함 한 문장, 작게 만들 결과물 후보, 충분함의 기준',
   },
   week2: {
-    label: '2주차. v0.1 제작',
-    shortLabel: '제작',
-    purpose: 'AI와 함께 현장에서 한 번 써볼 수 있는 결과물 초안을 만듭니다.',
-    outcome: '프롬프트, 체크리스트, 대화 스크립트, 문서 템플릿 등 v0.1 산출물',
+    label: '2주차. 작게 만들어보기',
+    shortLabel: '만들어보기',
+    purpose: 'AI와 함께 현업에서 한 번 돌려볼 수 있는 작은 결과물을 만듭니다.',
+    outcome: '프롬프트, 체크리스트, 대화 스크립트, 문서 템플릿 등 첫 결과물',
   },
   week3: {
-    label: '3주차. 현업 테스트',
-    shortLabel: '테스트/회고',
-    purpose: 'v0.1을 실제 맥락에서 한 번 사용하고 배운 점을 회고합니다.',
-    outcome: '현업 테스트 기록, Before/After Case Note, 회고',
+    label: '3주차. 한 번 돌려보기',
+    shortLabel: '돌려보기',
+    purpose: '만든 결과물을 실제 상황에서 한 번 써보고 함께 회고합니다.',
+    outcome: '현업에서 한 번 돌려본 기록, Before/After 케이스, 회고',
   },
   wrapup: {
-    label: '마무리. 방법론화',
-    shortLabel: '방법론화',
-    purpose: '1기 경험을 Humanistic 방법론과 다음 기수 운영 자산으로 전환합니다.',
+    label: '마무리. 함께 정리',
+    shortLabel: '정리',
+    purpose: '1기 경험을 다음 코호트와 Humanistic 방법론 자산으로 옮깁니다.',
     outcome: 'OURS Method 업데이트, 1기 실천 기록, 2기/컨설팅 판단',
   },
 };
@@ -87,7 +87,7 @@ export function getParticipantNextAction(participant: Participant) {
   if (participant.nextAction) return participant.nextAction;
   const next = nextActionableItem(participant.checklist ?? {});
   if (next) return `OURS ${next.phase}: ${next.label}`;
-  return 'Before/After Case Note와 배운 점을 정리합니다.';
+  return '한 장 케이스 노트와 배운 점을 정리합니다.';
 }
 
 export function getPublicSummary(state: AppState) {

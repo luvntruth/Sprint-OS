@@ -43,9 +43,25 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
     setState({ ...state, sprint: { ...state.sprint, ...patch } });
   };
 
+  const dateMissing = mode === 'admin' && (!state.sprint.startDate || !state.sprint.endDate);
+  const scrollToSetup = () => {
+    document.getElementById('admin-setup')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <section className="dashboard-page">
       <Onboarding mode={mode} />
+      {dateMissing ? (
+        <div className="setup-banner" role="status">
+          <div>
+            <strong>스프린트 시작일·종료일이 비어 있어요.</strong>
+            <small>입력해두면 타임라인에 오늘 위치 마커가 뜹니다.</small>
+          </div>
+          <button type="button" className="subtle" onClick={scrollToSetup}>
+            운영 설정으로 이동 →
+          </button>
+        </div>
+      ) : null}
       <div className={mode === 'admin' ? 'command-hero admin-hero' : 'command-hero public-hero'}>
         <div>
           <p className="eyebrow">{mode === 'admin' ? 'Operator Command Center' : 'Participant Home'}</p>
@@ -206,7 +222,7 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
       </section>
 
       {mode === 'admin' && (
-        <section className="panel compact-panel admin-controls-panel">
+        <section id="admin-setup" className="panel compact-panel admin-controls-panel">
           <div className="section-head clean-head">
             <div>
               <p className="eyebrow">Admin Setup</p>
