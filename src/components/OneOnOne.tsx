@@ -1,8 +1,20 @@
 import { useState } from 'react';
-import type { AppState, FacilitatorNote, Participant } from '../types';
+import type { AppState, FacilitatorNote, Participant, WeekKey } from '../types';
 import { OursProgress, PhasePill } from './OursProgress';
 import { currentPhase, nextActionableItem } from '../lib/checklists';
 import { generateNextTicketPrompt, generateSurveyAnalysisPrompt } from '../prompts';
+
+const WEEK_LABELS: Record<WeekKey, string> = {
+  week1: '1주차',
+  week2: '2주차',
+  week3: '3주차',
+  wrapup: '마무리',
+};
+const WEEK_ORDER: WeekKey[] = ['week1', 'week2', 'week3', 'wrapup'];
+
+function deriveCurrentWeek(stage: string): WeekKey | null {
+  return (WEEK_ORDER as string[]).includes(stage) ? (stage as WeekKey) : null;
+}
 
 interface Props {
   state: AppState;
@@ -49,6 +61,12 @@ export function OneOnOne({ state, setState }: Props) {
   const updateNote = (key: keyof FacilitatorNote, value: string) => {
     update({ facilitatorNote: { ...active.facilitatorNote, [key]: value } });
   };
+
+  const updateWeekly = (week: WeekKey, value: string) => {
+    update({ weeklyReflection: { ...(active.weeklyReflection ?? {}), [week]: value } });
+  };
+
+  const currentWeek = deriveCurrentWeek(state.sprint.currentStage);
 
   const copyPrompt = async (label: string, text: string) => {
     try {
@@ -146,6 +164,32 @@ export function OneOnOne({ state, setState }: Props) {
                 onChange={(e) => update({ nextAction: e.target.value })}
               />
             </label>
+          </div>
+
+          <div className="weekly-reflections-block">
+            <span className="block-label">주차별 한 줄 회고</span>
+            {currentWeek ? (
+              <label className="weekly-input">
+                <small>{WEEK_LABELS[currentWeek]} (현재)</small>
+                <input
+                  value={(active.weeklyReflection ?? {})[currentWeek] ?? ''}
+                  onChange={(e) => updateWeekly(currentWeek, e.target.value)}
+                  placeholder="이번 주 한 줄 — 무엇이 도움됐고 무엇이 막혔는지"
+                />
+              </label>
+            ) : (
+              <small className="muted-em">현재 단계는 회고 주차가 아닙니다 (prep).</small>
+            )}
+            {WEEK_ORDER.filter((w) => w !== currentWeek && (active.weeklyReflection ?? {})[w]).length > 0 ? (
+              <ul className="weekly-history">
+                {WEEK_ORDER.filter((w) => w !== currentWeek && (active.weeklyReflection ?? {})[w]).map((w) => (
+                  <li key={w}>
+                    <em>{WEEK_LABELS[w]}</em>
+                    <span>{(active.weeklyReflection ?? {})[w]}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </article>
 

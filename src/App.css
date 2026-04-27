@@ -693,3 +693,21 @@ summary { cursor: pointer; font-weight: 900; padding: .6rem .45rem; color: var(-
 
 .prompt-actions { margin-top: .8rem; padding-top: .8rem; border-top: 1px dashed var(--line); display: flex; gap: .55rem; align-items: center; flex-wrap: wrap; }
 .copied-flash { color: var(--green); font-size: .8rem; font-weight: 800; }
+
+/* ============================================================
+   Weekly Reflection (1주차 한 줄 회고)
+   ============================================================ */
+.weekly-reflections, .weekly-reflections-block { margin-top: .65rem; padding: .6rem .75rem; border: 1px dashed var(--line); border-radius: var(--radius-sm); background: var(--surface-soft); display: grid; gap: .4rem; }
+.block-label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.weekly-reflections ul, .weekly-history { list-style: none; padding: 0; margin: 0; display: grid; gap: .25rem; }
+.weekly-reflections li, .weekly-history li { display: grid; grid-template-columns: 60px 1fr; gap: .55rem; align-items: baseline; font-size: .82rem; }
+.weekly-reflections li em, .weekly-history li em { font-style: normal; color: var(--accent); font-weight: 800; }
+.weekly-reflections li span, .weekly-history li span { color: var(--ink); line-height: 1.45; }
+.weekly-input { display: grid; gap: .25rem; }
+.weekly-input small { color: var(--muted); font-size: .76rem; font-weight: 700; }
+.weekly-input input { padding: .55rem .7rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); font: inherit; }
+
+.op-weekly-reflections { list-style: none; padding: 0; margin: .55rem 0 0; display: grid; gap: .25rem; border-top: 1px dashed var(--line); padding-top: .55rem; }
+.op-weekly-reflections li { display: grid; grid-template-columns: 56px 1fr; gap: .5rem; align-items: baseline; font-size: .78rem; }
+.op-weekly-reflections em { font-style: normal; color: var(--accent); font-weight: 800; }
+.op-weekly-reflections span { color: var(--ink); line-height: 1.4; }

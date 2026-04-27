@@ -1,8 +1,16 @@
-import type { AppState } from '../types';
+import type { AppState, WeekKey } from '../types';
 import { Timeline } from './Timeline';
 import { OursProgress, PhasePill } from './OursProgress';
 import { currentPhase, overallProgress, nextActionableItem } from '../lib/checklists';
 import { stageMeta } from '../uiModel';
+
+const WEEK_LABELS: Record<WeekKey, string> = {
+  week1: '1주차',
+  week2: '2주차',
+  week3: '3주차',
+  wrapup: '마무리',
+};
+const WEEK_ORDER: WeekKey[] = ['week1', 'week2', 'week3', 'wrapup'];
 
 interface Props {
   state: AppState;
@@ -98,6 +106,17 @@ export function OnePager({ state, mode = 'public' }: Props) {
                       <dd>{p.nextAction || (next ? `${next.phase}: ${next.label}` : '회고와 케이스 정리')}</dd>
                     </div>
                   </dl>
+
+                  {WEEK_ORDER.filter((w) => (p.weeklyReflection ?? {})[w]).length > 0 ? (
+                    <ul className="op-weekly-reflections">
+                      {WEEK_ORDER.filter((w) => (p.weeklyReflection ?? {})[w]).map((w) => (
+                        <li key={w}>
+                          <em>{WEEK_LABELS[w]}</em>
+                          <span>{(p.weeklyReflection ?? {})[w]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
 
                   <div className="op-progress-foot">
                     <small>완료 {overall.done}/{overall.total}</small>
