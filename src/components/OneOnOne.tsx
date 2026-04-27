@@ -66,10 +66,13 @@ export function OneOnOne({ state, setState }: Props) {
 
   return (
     <section className="panel one-on-one">
-      <div className="hero-card soft">
+      <div className="screen-heading">
+        <div>
         <p className="eyebrow">1on1 통합 노트</p>
         <h1>한 참가자, 한 화면</h1>
         <p>운영실·회고·원본 데이터·분석 프롬프트를 한 화면에서 채웁니다. 모든 데이터는 같은 참가자 카드에 저장됩니다.</p>
+        </div>
+        <span className="screen-mode-pill">운영 입력</span>
       </div>
 
       <div className="participant-picker" role="tablist" aria-label="참가자 선택">
@@ -92,7 +95,7 @@ export function OneOnOne({ state, setState }: Props) {
         <article className="panel sub-panel">
           <header className="section-head clean-head">
             <div>
-              <p className="eyebrow">Participant</p>
+              <p className="eyebrow">참가자 요약</p>
               <h2>참가자 한눈에</h2>
             </div>
             <PhasePill phase={here} />
@@ -149,7 +152,7 @@ export function OneOnOne({ state, setState }: Props) {
         <article className="panel sub-panel">
           <header className="section-head clean-head">
             <div>
-              <p className="eyebrow">Facilitator Note</p>
+              <p className="eyebrow">운영자 메모</p>
               <h2>운영자 진단·개입</h2>
             </div>
             <small className="muted-em">참가자에게는 보이지 않습니다</small>
@@ -176,7 +179,7 @@ export function OneOnOne({ state, setState }: Props) {
               className="subtle"
               onClick={() => copyPrompt('설문 분석', generateSurveyAnalysisPrompt(active))}
             >
-              📋 설문 분석 프롬프트 복사
+              설문 분석 프롬프트 복사
             </button>
             <button
               type="button"
@@ -196,7 +199,7 @@ export function OneOnOne({ state, setState }: Props) {
                 )
               }
             >
-              📋 다음 티켓 프롬프트 복사
+              다음 티켓 프롬프트 복사
             </button>
             {copied ? <small className="copied-flash">✓ "{copied}" 복사됨</small> : null}
           </div>

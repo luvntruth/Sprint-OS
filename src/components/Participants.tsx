@@ -67,7 +67,7 @@ export function Participants({ state, setState }: Props) {
     <section className="panel participants-panel">
       <div className="section-head clean-head">
         <div>
-          <p className="eyebrow">Participant Data</p>
+          <p className="eyebrow">참가자 데이터</p>
           <h1>참가자 원본 데이터</h1>
         </div>
         <span>설문 → 문제 정의 → 다음 액션</span>
@@ -75,7 +75,7 @@ export function Participants({ state, setState }: Props) {
 
       <div className="quick-import-card">
         <div>
-          <p className="eyebrow">Google Form Quick Paste</p>
+          <p className="eyebrow">빠른 입력</p>
           <h2>사전 설문 빠른 입력</h2>
           <p>Google Form 응답을 그대로 붙여넣으면 설문 원문을 저장하고, 이름/역할/문제/결과물 후보/다음 액션을 빈 칸 위주로 자동 채웁니다.</p>
         </div>

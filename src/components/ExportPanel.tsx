@@ -26,18 +26,18 @@ export function ExportPanel({ state }: Props) {
     <section className="panel export-panel">
       <div className="section-head clean-head">
         <div>
-          <p className="eyebrow">Obsidian Export</p>
+          <p className="eyebrow">내보내기</p>
           <h1>Markdown 내보내기</h1>
         </div>
         <span>{filename}</span>
       </div>
       <div className="notice">
-        <strong>Export 구성</strong>
+        <strong>내보내기 구성</strong>
         <ul>
           <li>YAML frontmatter와 Obsidian wikilink 포함</li>
           <li>단계별 티켓 체크리스트와 참가자별 Case Note 포함</li>
-          <li>Public Sharing Snapshot은 교육생 공유 가능 내용만 따로 분리</li>
-          <li>Facilitator Notes는 비공개 운영자용 섹션으로 명시</li>
+          <li>참가자 공유 가능 내용은 Public Sharing Snapshot으로 따로 분리</li>
+          <li>운영자 메모는 비공개 운영자용 섹션으로 명시</li>
         </ul>
       </div>
       <div className="toolbar">

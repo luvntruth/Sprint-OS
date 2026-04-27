@@ -1,112 +1,123 @@
 # Sprint OS DESIGN.md
 
-> Adapted from VoltAgent / awesome-design-md for AX x HR Sprint OS.
+## 디자인 의도
 
-## Design Intent
+Sprint OS는 처음 들어온 참가자가 바로 이해할 수 있는 **3주 실천 모임 진행판**이어야 합니다.
 
-Sprint OS should feel like a focused **operator cockpit** for running a 3-week Humanistic Practice Lab cohort, not like a generic SaaS dashboard.
-
-The visual metaphor is:
+핵심 질문:
 
 ```text
-Dark operating room + emerald signal system + warm humanistic text layer
+이 서비스는 무엇인가?
+우리는 지금 3주 흐름 중 어디에 있는가?
+나는 오늘 무엇을 해야 하는가?
+내 문제와 다음 액션은 어디에서 확인하는가?
 ```
 
-The UI should help the founder and participants instantly answer:
+기준 경험은 Public/참가자 화면입니다. Admin 화면은 공유 화면을 관리하고 운영 기록을 남기는 확장 화면입니다.
+
+## 시각 방향
 
 ```text
-Where are we?
-What has happened?
-What is blocked?
-What should I do next?
+화이트 기반 업무툴 + 명확한 진행판 + 절제된 초록 신호
 ```
 
-## Reference
+- 장식보다 정보 위계를 우선합니다.
+- 화면을 처음 보는 사람도 메뉴 이름만 보고 목적을 알 수 있어야 합니다.
+- 초록색은 진행/활성/다음 액션을 가리키는 신호로만 사용합니다.
+- 그림자와 그라디언트는 최소화하고, 테두리·여백·정렬로 구조를 만듭니다.
 
-Source inspiration:
-
-```text
-https://github.com/VoltAgent/awesome-design-md
-VoltAgent design system: void-black canvas, emerald accent, terminal-native developer dashboard
-```
-
-## Palette
+## 팔레트
 
 ```css
---bg: #050507;              /* abyss black */
---surface: #101010;         /* carbon surface */
---surface-soft: #151513;    /* raised cards */
---surface-glow: #18211d;    /* green-tinted panels */
---ink: #f2f2f2;             /* primary text */
---muted: #b8b3b0;           /* secondary text */
---subtle: #8b949e;          /* tertiary text */
---line: #3d3a39;            /* warm charcoal border */
---line-strong: #5b5652;     /* stronger separator */
---accent: #00d992;          /* emerald signal */
---accent-2: #2fd6a1;        /* readable mint */
---accent-soft: rgba(0, 217, 146, 0.12);
---green: #00d992;
---amber: #ffba00;
---red: #fb565b;
+--bg: #f7faf9;              /* 전체 앱 배경 */
+--surface: #ffffff;         /* 주요 패널 */
+--surface-soft: #f2f7f4;    /* 보조 표면 */
+--surface-danger: #fff1f2;  /* 막힘/주의 */
+--ink: #17201b;             /* 주요 텍스트 */
+--muted: #4f5f57;           /* 보조 텍스트 */
+--subtle: #708078;          /* 라벨/설명 */
+--line: #dce7e1;            /* 기본 테두리 */
+--line-strong: #b9c8c0;     /* 강한 구분선 */
+--accent: #0f8f68;          /* 진행/활성 신호 */
+--accent-2: #0b7559;        /* 텍스트용 초록 */
+--accent-soft: rgba(15, 143, 104, 0.1);
+--accent-line: rgba(15, 143, 104, 0.28);
+--amber: #b7791f;
+--red: #c2414b;
+--blue: #2563eb;
 ```
 
-## Typography
+## 정보 구조
 
-- Use system-ui / Inter for readable Korean UI.
-- Use JetBrains Mono / monospace for overlines, state labels, technical chips, stage IDs.
-- Headings should be tight and compressed.
-- Uppercase labels should use wide tracking.
+### Public / 참가자 화면
 
-## Components
+Public 메뉴는 4개 이하로 유지합니다.
 
-### App Shell
+```text
+홈
+우리 카드
+이번 주 할 일
+한 장 요약
+```
 
-- Full dark canvas.
-- Sidebar is slightly raised carbon surface.
-- Main workspace uses subtle radial glow backgrounds.
+Public 화면은 다음만 우선 보여줍니다.
 
-### Sidebar
+- 현재 단계
+- 오늘 할 일
+- 막힌 것
+- 내 문제
+- 만들 결과물
+- 다음 액션
+- 현재 OURS 단계
 
-- Current view mode should be explicit.
-- Active nav item uses emerald border/glow.
-- Public/admin distinction is clear but not represented as real auth.
+### Admin / 운영자 화면
 
-### Cards
+Admin 메뉴는 역할별로 묶습니다.
 
-- Carbon surface with warm charcoal border.
-- Use emerald border only for active/high-signal states.
-- Do not use large light surfaces.
+```text
+공유 화면: 홈, 우리 카드, 이번 주 할 일, 한 장 요약
+운영 입력: 프로젝트 설계, 1:1 노트, 참가자 데이터, 운영 메모
+분석·축적: AI 분석, 회고, 방법론, 내보내기
+```
 
-### Dashboard
+Admin 화면은 참가자에게 보여줄 공유 화면과 운영자만 보는 입력 화면을 분리해야 합니다.
 
-- Hero should feel like a command-center status panel.
-- Current stage and next action must be visually dominant.
-- Progress roadmap should read as an operating sequence.
+## 컴포넌트 원칙
 
-### Public View
+### 홈
 
-- Public view should be calmer and safer.
-- Hide P-0 and private facilitator notes.
-- Use participant-facing wording: "오늘 할 일", "내 문제", "다음 액션".
+- 최상단에 “AX x HR 3주 실천 모임 진행판”이라는 정체성이 보여야 합니다.
+- 첫 화면의 1순위 정보는 현재 단계, 오늘 할 일, 막힌 것입니다.
+- 3주 흐름은 5단계 진행판으로 간결하게 보여줍니다.
+- 참가자 진행은 카드 장식보다 표/리스트에 가깝게 정리합니다.
 
-### Admin View
+### 우리 카드
 
-- Admin view should feel like an operator console.
-- Show full ticket counts, private menus, raw data, analysis, reflection, method accumulation.
+- 참가자별로 문제, 만들 결과물, 다음 액션, 현재 OURS 단계를 먼저 보여줍니다.
+- 참가자 화면에서는 비공개 진단, 운영 메모, 원본 설문을 노출하지 않습니다.
 
-## Do
+### 이번 주 할 일
 
-- Use black/carbon surfaces.
-- Use emerald as a signal, not as a large fill.
-- Use borders for hierarchy.
-- Keep content scannable.
-- Make next actions obvious.
-- Keep public/admin limitations visible.
+- Public 화면에서는 상태 숫자보다 “참가자가 이번 단계에서 할 일”을 먼저 보여줍니다.
+- Admin 화면에서는 상태/우선순위/담당자 편집이 가능해야 합니다.
 
-## Don't
+### 폼 화면
 
-- Do not use bright beige/white app backgrounds.
-- Do not make every card glow.
-- Do not imply real authorization until auth exists.
-- Do not expose facilitator diagnosis in public mode.
-- Do not let the participant-facing screen feel like a sales funnel.
+- 분석, 회고, 운영 메모처럼 긴 입력 화면은 한 덩어리 폼으로 두지 않습니다.
+- `1. 선택`, `2. 입력`, `3. 저장/다음 액션`처럼 단계가 보이도록 나눕니다.
+
+## 해야 할 것
+
+- 한국어 중심 라벨을 사용합니다.
+- 내부자 용어는 필요한 경우에만 쓰고, 처음 보는 사람이 이해할 수 있는 설명을 붙입니다.
+- 카드 radius는 8px 중심으로 유지합니다.
+- Public/Admin 분리가 실제 인증이 아니라는 점을 계속 보이게 합니다.
+- 모바일에서 텍스트와 버튼이 겹치지 않도록 한 열 레이아웃으로 내려갑니다.
+
+## 하지 말아야 할 것
+
+- 다크 운영실 콘셉트로 되돌리지 않습니다.
+- 배경 장식, glow, 강한 그라디언트를 과하게 쓰지 않습니다.
+- Public 화면에 Admin 전용 입력이나 퍼실리테이터 진단을 노출하지 않습니다.
+- 참가자 화면을 세일즈 퍼널처럼 만들지 않습니다.
+- 새 의존성을 추가해 단순 UI 정리 범위를 키우지 않습니다.

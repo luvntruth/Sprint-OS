@@ -32,20 +32,27 @@ type Tab =
   | 'export';
 
 type ViewMode = 'public' | 'admin';
+type NavSection = 'shared' | 'operations' | 'learning';
 
-const allTabs: Array<{ id: Tab; label: string; eyebrow: string; description: string; visibility: ViewMode | 'both' }> = [
-  { id: 'dashboard', label: '현황판', eyebrow: 'Overview', description: '오늘 우리가 어디에 있는지', visibility: 'both' },
-  { id: 'room', label: '우리 실천방', eyebrow: 'Shared', description: '함께 보는 우리 카드', visibility: 'both' },
-  { id: 'tickets', label: '이번 주 할 일', eyebrow: 'Execution', description: '단계별 작은 실행 목록', visibility: 'both' },
-  { id: 'projectLab', label: '프로젝트 랩', eyebrow: 'OURS', description: '답답함을 작게 다듬기', visibility: 'both' },
-  { id: 'onepager', label: '한 장 요약', eyebrow: 'Snapshot', description: '인쇄·PDF 가능한 한 페이지', visibility: 'both' },
-  { id: 'oneonone', label: '1on1 노트', eyebrow: 'Sync', description: '참가자별 통합 운영 노트', visibility: 'admin' },
-  { id: 'cockpit', label: '운영실', eyebrow: 'Private', description: '운영자 진단/개입 기록', visibility: 'admin' },
-  { id: 'method', label: '방법론', eyebrow: 'Library', description: 'Humanistic 방법론 축적', visibility: 'admin' },
-  { id: 'analysis', label: '분석', eyebrow: 'AI', description: 'AI 분석 프롬프트', visibility: 'admin' },
-  { id: 'reflection', label: '회고', eyebrow: 'Learning', description: '운영자 회고 기록', visibility: 'admin' },
-  { id: 'participants', label: '원본 데이터', eyebrow: 'Raw', description: '참가자 상세 입력', visibility: 'admin' },
-  { id: 'export', label: '내보내기', eyebrow: 'Markdown', description: 'Obsidian 내보내기', visibility: 'admin' },
+const sectionLabels: Record<NavSection, string> = {
+  shared: '공유 화면',
+  operations: '운영 입력',
+  learning: '분석·축적',
+};
+
+const allTabs: Array<{ id: Tab; label: string; eyebrow: string; description: string; visibility: ViewMode | 'both'; section: NavSection }> = [
+  { id: 'dashboard', label: '홈', eyebrow: '현재 위치', description: '지금 단계와 오늘 할 일', visibility: 'both', section: 'shared' },
+  { id: 'room', label: '우리 카드', eyebrow: '참가자 진행', description: '문제·결과물·다음 액션', visibility: 'both', section: 'shared' },
+  { id: 'tickets', label: '이번 주 할 일', eyebrow: '오늘 할 일', description: '이번 단계의 실행 목록', visibility: 'both', section: 'shared' },
+  { id: 'onepager', label: '한 장 요약', eyebrow: '공유 요약', description: '인쇄·PDF 가능한 요약', visibility: 'both', section: 'shared' },
+  { id: 'projectLab', label: '프로젝트 설계', eyebrow: 'OURS 설계', description: '참가자별 OURS 체크', visibility: 'admin', section: 'operations' },
+  { id: 'oneonone', label: '1:1 노트', eyebrow: '개별 운영', description: '참가자별 통합 노트', visibility: 'admin', section: 'operations' },
+  { id: 'participants', label: '참가자 데이터', eyebrow: '원본 데이터', description: '상세 정보와 설문 입력', visibility: 'admin', section: 'operations' },
+  { id: 'cockpit', label: '운영 메모', eyebrow: '비공개 메모', description: '진단·질문·개입 기록', visibility: 'admin', section: 'operations' },
+  { id: 'analysis', label: 'AI 분석', eyebrow: '분석 보조', description: '분석 프롬프트와 결과', visibility: 'admin', section: 'learning' },
+  { id: 'reflection', label: '회고', eyebrow: '운영 회고', description: '회차별 회고와 다음 액션', visibility: 'admin', section: 'learning' },
+  { id: 'method', label: '방법론', eyebrow: '방법론 축적', description: 'Humanistic 자산화', visibility: 'admin', section: 'learning' },
+  { id: 'export', label: '내보내기', eyebrow: 'Markdown', description: 'Obsidian 내보내기', visibility: 'admin', section: 'learning' },
 ];
 
 function getInitialMode(): ViewMode {
@@ -89,26 +96,35 @@ function App() {
           <div className="brand-mark">↯</div>
           <div>
             <strong>Sprint OS</strong>
-            <span>{mode === 'public' ? 'Practice Room' : 'Operator Cockpit'}</span>
+            <span>{mode === 'public' ? '3주 실천 진행판' : '운영자 확장 화면'}</span>
           </div>
         </div>
 
         <div className={mode === 'public' ? 'mode-card public' : 'mode-card admin'}>
-          <strong>{mode === 'public' ? '함께 보는 화면 · 보기 전용' : '문턱장용 · 운영 콘솔'}</strong>
-          <p>{mode === 'public' ? '진행상황과 다음 작은 행동만 함께 확인합니다. 운영자 기록과 진단 메모는 보이지 않습니다.' : '데이터 입력, 진단, 분석, 회고, 방법론 축적까지 관리합니다. 실제 권한 보호는 아직 없습니다.'}</p>
+          <strong>{mode === 'public' ? '참가자와 함께 보는 화면' : '운영자(문턱장) 화면'}</strong>
+          <p>{mode === 'public' ? '지금 단계, 내 문제, 만들 결과물, 다음 액션만 확인합니다. 보기 전용입니다.' : '공유 화면을 관리하고 참가자 데이터, 운영 메모, 분석, 회고를 입력합니다. 실제 권한 보호는 아직 없습니다.'}</p>
         </div>
 
         <nav className="side-nav" aria-label="Primary navigation">
-          {tabs.map((item) => (
-            <button
-              key={item.id}
-              className={tab === item.id ? 'nav-item active' : 'nav-item'}
-              onClick={() => setTab(item.id)}
-            >
-              <span>{item.label}</span>
-              <small>{item.description}</small>
-            </button>
-          ))}
+          {(['shared', 'operations', 'learning'] as NavSection[]).map((section) => {
+            const sectionTabs = tabs.filter((item) => item.section === section);
+            if (sectionTabs.length === 0) return null;
+            return (
+              <div className="nav-section" key={section}>
+                {mode === 'admin' && <p>{sectionLabels[section]}</p>}
+                {sectionTabs.map((item) => (
+                  <button
+                    key={item.id}
+                    className={tab === item.id ? 'nav-item active' : 'nav-item'}
+                    onClick={() => setTab(item.id)}
+                  >
+                    <span>{item.label}</span>
+                    <small>{item.description}</small>
+                  </button>
+                ))}
+              </div>
+            );
+          })}
         </nav>
 
         <div className="sidebar-footer">

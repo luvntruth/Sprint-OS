@@ -24,10 +24,13 @@ export function FacilitatorCockpit({ state, setState }: Props) {
 
   return (
     <section className="panel cockpit">
-      <div className="hero-card private">
-        <p className="eyebrow">Private Facilitator Cockpit</p>
-        <h1>문턱장 컨설턴트 훈련실</h1>
+      <div className="screen-heading">
+        <div>
+        <p className="eyebrow">비공개 운영 메모</p>
+        <h1>운영자(문턱장) 훈련실</h1>
         <p>참가자와 공유하지 않는 운영자 전용 공간입니다. 사람을 돕는 방식, 질문, 개입, 놓친 지점을 훈련 데이터로 축적합니다.</p>
+        </div>
+        <span className="screen-mode-pill">참가자에게 비공개</span>
       </div>
 
       {state.participants.map((participant) => (

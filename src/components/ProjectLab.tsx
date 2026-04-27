@@ -58,14 +58,17 @@ export function ProjectLab({ state, setState, readOnly = false }: Props) {
 
   return (
     <section className="panel project-lab">
-      <div className="hero-card soft">
-        <p className="eyebrow">Project Lab</p>
-        <h1>{readOnly ? 'OURS 단계, 우리는 어디쯤?' : 'OURS Method 프로젝트 랩'}</h1>
+      <div className="screen-heading">
+        <div>
+        <p className="eyebrow">OURS 설계</p>
+        <h1>{readOnly ? 'OURS 단계, 우리는 어디쯤?' : '프로젝트 설계'}</h1>
         <p>
           {readOnly
             ? '답답함을 작게 다듬어가는 4단계 흐름입니다. 체크는 운영자가 함께 확인하며 채워드립니다.'
             : '체크리스트로 단계별 완료 신호를 남기고, 자유 메모로 맥락을 보강합니다. 참가자와 대화하며 함께 체크합니다.'}
         </p>
+        </div>
+        <span className="screen-mode-pill">운영 입력</span>
       </div>
 
       {visibleParticipants.length === 0 ? (
