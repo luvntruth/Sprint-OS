@@ -5,29 +5,24 @@ import { initialState } from './initialState';
 import { clearSavedState, loadState, saveState } from './storage';
 import { Dashboard } from './components/Dashboard';
 import { Participants } from './components/Participants';
-import { AnalysisInbox } from './components/AnalysisInbox';
 import { TicketBoard } from './components/TicketBoard';
 import { ReflectionPanel } from './components/ReflectionPanel';
 import { ExportPanel } from './components/ExportPanel';
 import { ParticipantRoom } from './components/ParticipantRoom';
-import { ProjectLab } from './components/ProjectLab';
-import { FacilitatorCockpit } from './components/FacilitatorCockpit';
 import { MethodLibrary } from './components/MethodLibrary';
 import { OnePager } from './components/OnePager';
 import { OneOnOne } from './components/OneOnOne';
+import { ParticipantMiniSidebar } from './components/ParticipantMiniSidebar';
 import { stageMeta } from './uiModel';
 
 type Tab =
   | 'dashboard'
   | 'room'
-  | 'projectLab'
   | 'tickets'
   | 'onepager'
   | 'oneonone'
-  | 'cockpit'
-  | 'method'
-  | 'analysis'
   | 'reflection'
+  | 'method'
   | 'participants'
   | 'export';
 
@@ -41,18 +36,15 @@ const sectionLabels: Record<NavSection, string> = {
 };
 
 const allTabs: Array<{ id: Tab; label: string; eyebrow: string; description: string; visibility: ViewMode | 'both'; section: NavSection }> = [
-  { id: 'dashboard', label: '홈', eyebrow: '현재 위치', description: '지금 단계와 오늘 할 일', visibility: 'both', section: 'shared' },
-  { id: 'room', label: '우리 카드', eyebrow: '참가자 진행', description: '문제·결과물·다음 액션', visibility: 'both', section: 'shared' },
-  { id: 'tickets', label: '이번 주 할 일', eyebrow: '오늘 할 일', description: '이번 단계의 실행 목록', visibility: 'both', section: 'shared' },
-  { id: 'onepager', label: '한 장 요약', eyebrow: '공유 요약', description: '인쇄·PDF 가능한 요약', visibility: 'both', section: 'shared' },
-  { id: 'projectLab', label: '프로젝트 설계', eyebrow: 'OURS 설계', description: '참가자별 OURS 체크', visibility: 'admin', section: 'operations' },
-  { id: 'oneonone', label: '1:1 노트', eyebrow: '개별 운영', description: '참가자별 통합 노트', visibility: 'admin', section: 'operations' },
-  { id: 'participants', label: '참가자 데이터', eyebrow: '원본 데이터', description: '상세 정보와 설문 입력', visibility: 'admin', section: 'operations' },
-  { id: 'cockpit', label: '운영 메모', eyebrow: '비공개 메모', description: '진단·질문·개입 기록', visibility: 'admin', section: 'operations' },
-  { id: 'analysis', label: 'AI 분석', eyebrow: '분석 보조', description: '분석 프롬프트와 결과', visibility: 'admin', section: 'learning' },
-  { id: 'reflection', label: '회고', eyebrow: '운영 회고', description: '회차별 회고와 다음 액션', visibility: 'admin', section: 'learning' },
-  { id: 'method', label: '방법론', eyebrow: '방법론 축적', description: 'Humanistic 자산화', visibility: 'admin', section: 'learning' },
-  { id: 'export', label: '내보내기', eyebrow: 'Markdown', description: 'Obsidian 내보내기', visibility: 'admin', section: 'learning' },
+  { id: 'dashboard', label: '오늘 어디?', eyebrow: '현재 위치', description: '지금 단계 · 할 일 · 막힌 곳', visibility: 'both', section: 'shared' },
+  { id: 'room', label: '참가자 카드', eyebrow: '한눈에', description: '4명의 문제·결과물·다음 액션', visibility: 'both', section: 'shared' },
+  { id: 'tickets', label: '이번 주 할 일', eyebrow: '실행 목록', description: '이번 단계 작은 실행', visibility: 'both', section: 'shared' },
+  { id: 'onepager', label: '한 장으로 보기', eyebrow: '공유 요약', description: '인쇄·PDF 한 페이지', visibility: 'both', section: 'shared' },
+  { id: 'oneonone', label: '1:1 워크북', eyebrow: '참가자별', description: 'OURS·메모·AI 한 화면', visibility: 'admin', section: 'operations' },
+  { id: 'participants', label: '데이터 입력', eyebrow: '원본 입력', description: '설문/카드 raw 필드', visibility: 'admin', section: 'operations' },
+  { id: 'reflection', label: '회차 회고', eyebrow: '운영 회고', description: '회차별 회고와 다음 액션', visibility: 'admin', section: 'learning' },
+  { id: 'method', label: '방법론 노트', eyebrow: '방법론 축적', description: 'Humanistic 자산화', visibility: 'admin', section: 'learning' },
+  { id: 'export', label: '마크다운 저장', eyebrow: 'Export', description: 'Obsidian으로 내보내기', visibility: 'admin', section: 'learning' },
 ];
 
 function getInitialMode(): ViewMode {
@@ -72,6 +64,16 @@ function App() {
   const [state, setState] = useState<AppState>(() => loadState(initialState));
   const [mode] = useState<ViewMode>(() => getInitialMode());
   const [tab, setTab] = useState<Tab>(() => getInitialTab(getInitialMode()));
+  const [focusedParticipantId, setFocusedParticipantId] = useState<string | undefined>(undefined);
+
+  const jumpToParticipant = (participantId: string) => {
+    setFocusedParticipantId(participantId);
+    if (mode === 'admin') {
+      setTab('oneonone');
+    } else {
+      setTab('room');
+    }
+  };
   const tabs = useMemo(
     () => allTabs.filter((item) => item.visibility === 'both' || item.visibility === mode),
     [mode],
@@ -104,6 +106,13 @@ function App() {
           <strong>{mode === 'public' ? '참가자와 함께 보는 화면' : '운영자(문턱장) 화면'}</strong>
           <p>{mode === 'public' ? '지금 단계, 내 문제, 만들 결과물, 다음 액션만 확인합니다. 보기 전용입니다.' : '공유 화면을 관리하고 참가자 데이터, 운영 메모, 분석, 회고를 입력합니다. 실제 권한 보호는 아직 없습니다.'}</p>
         </div>
+
+        <ParticipantMiniSidebar
+          state={state}
+          mode={mode}
+          activeId={tab === 'oneonone' ? focusedParticipantId : undefined}
+          onJump={jumpToParticipant}
+        />
 
         <nav className="side-nav" aria-label="Primary navigation">
           {(['shared', 'operations', 'learning'] as NavSection[]).map((section) => {
@@ -152,15 +161,12 @@ function App() {
           </div>
         </header>
 
-        {tab === 'dashboard' && <Dashboard state={state} setState={setState} mode={mode} />}
+        {tab === 'dashboard' && <Dashboard state={state} setState={setState} mode={mode} setTab={setTab as (t: string) => void} onJumpToParticipant={jumpToParticipant} />}
         {tab === 'room' && <ParticipantRoom state={state} setState={setState} readOnly={mode === 'public'} />}
-        {tab === 'projectLab' && <ProjectLab state={state} setState={setState} readOnly={mode === 'public'} />}
         {tab === 'tickets' && <TicketBoard state={state} setState={setState} readOnly={mode === 'public'} />}
         {tab === 'onepager' && <OnePager state={state} mode={mode} />}
-        {mode === 'admin' && tab === 'oneonone' && <OneOnOne state={state} setState={setState} />}
-        {mode === 'admin' && tab === 'cockpit' && <FacilitatorCockpit state={state} setState={setState} />}
+        {mode === 'admin' && tab === 'oneonone' && <OneOnOne state={state} setState={setState} initialParticipantId={focusedParticipantId} />}
         {mode === 'admin' && tab === 'method' && <MethodLibrary state={state} setState={setState} />}
-        {mode === 'admin' && tab === 'analysis' && <AnalysisInbox state={state} setState={setState} />}
         {mode === 'admin' && tab === 'reflection' && <ReflectionPanel state={state} setState={setState} />}
         {mode === 'admin' && tab === 'participants' && <Participants state={state} setState={setState} />}
         {mode === 'admin' && tab === 'export' && <ExportPanel state={state} />}

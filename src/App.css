@@ -711,3 +711,91 @@ summary { cursor: pointer; font-weight: 900; padding: .6rem .45rem; color: var(-
 .op-weekly-reflections li { display: grid; grid-template-columns: 56px 1fr; gap: .5rem; align-items: baseline; font-size: .78rem; }
 .op-weekly-reflections em { font-style: normal; color: var(--accent); font-weight: 800; }
 .op-weekly-reflections span { color: var(--ink); line-height: 1.4; }
+
+/* ============================================================
+   UI/UX Revamp — sidebar mini, OURS distribution, kanban mini, blocker
+   ============================================================ */
+
+/* Sidebar participant mini cards */
+.participant-mini-sidebar { padding: .65rem .55rem; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); display: grid; gap: .4rem; }
+.public-mode .participant-mini-sidebar { background: rgba(0,0,0,.04); border-color: var(--line); }
+.mini-sidebar-label { margin: 0 0 .15rem; font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.55); }
+.public-mode .mini-sidebar-label { color: var(--muted); }
+.participant-mini-sidebar ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+.mini-card { width: 100%; display: grid; grid-template-columns: 32px minmax(0,1fr) auto; align-items: center; gap: .4rem; padding: .45rem .55rem; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid transparent; color: #fff; cursor: pointer; transition: border-color .14s ease, background .14s ease; position: relative; }
+.public-mode .mini-card { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
+.mini-card:hover { border-color: var(--accent); }
+.mini-card.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.public-mode .mini-card.active { background: var(--accent-soft); color: var(--accent); }
+.mini-card.blocked { border-color: rgba(251,86,91,.5); }
+.mini-id { font-size: .7rem; font-weight: 800; opacity: .65; }
+.mini-name { font-size: .82rem; font-weight: 700; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-phase { font-size: .72rem; font-weight: 800; padding: .12rem .3rem; border-radius: 6px; background: rgba(255,255,255,.1); }
+.public-mode .mini-phase { background: var(--accent-soft); color: var(--accent); }
+.mini-bar { grid-column: 2 / 4; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+.public-mode .mini-bar { background: var(--line); }
+.mini-bar > span { display: block; height: 100%; background: var(--accent); transition: width .25s ease; }
+.mini-blocker-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 2px rgba(251,86,91,.25); }
+
+/* Cohort flow panel (Dashboard) */
+.cohort-flow-panel { display: grid; gap: .8rem; }
+.cohort-flow-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: 1rem; align-items: stretch; }
+@media (max-width: 980px) { .cohort-flow-grid { grid-template-columns: 1fr; } }
+
+/* OURS Distribution */
+.ours-distribution { display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem; }
+.ours-dist-col { padding: .65rem .7rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-soft); display: grid; gap: .45rem; }
+.ours-dist-col-o { border-left: 4px solid var(--accent); }
+.ours-dist-col-u { border-left: 4px solid #2056a8; }
+.ours-dist-col-r { border-left: 4px solid var(--amber); }
+.ours-dist-col-s { border-left: 4px solid var(--green); }
+.ours-dist-col header { display: grid; gap: .15rem; }
+.ours-dist-col header strong { font-size: 1.1rem; letter-spacing: -.04em; }
+.ours-dist-label { font-size: .75rem; font-weight: 800; color: var(--muted); }
+.ours-dist-col header small { font-size: .72rem; color: var(--subtle); line-height: 1.3; }
+.ours-dist-count { margin: 0; font-size: .82rem; font-weight: 800; color: var(--accent); }
+.ours-dist-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .25rem; }
+.ours-dist-list li button, .ours-dist-list li > span { display: flex; align-items: center; gap: .35rem; width: 100%; padding: .35rem .5rem; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font: inherit; cursor: pointer; transition: border-color .12s ease; position: relative; }
+.ours-dist-list li > span { cursor: default; }
+.ours-dist-list li button:hover { border-color: var(--accent); }
+.ours-dist-list li.blocked button, .ours-dist-list li.blocked > span { border-color: rgba(251,86,91,.55); }
+.ours-dist-list strong { font-size: .76rem; opacity: .7; }
+.ours-dist-list span { font-size: .82rem; font-weight: 700; }
+.ours-dist-empty { color: var(--subtle); font-size: .8rem; padding: .25rem .5rem; }
+.dist-blocker-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-left: auto; box-shadow: 0 0 0 2px rgba(251,86,91,.2); }
+
+/* Week Kanban Mini */
+.week-kanban-mini { padding: .85rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-soft); display: grid; gap: .5rem; align-content: center; text-align: left; font: inherit; color: inherit; }
+.week-kanban-mini.interactive { cursor: pointer; transition: border-color .14s ease, transform .14s ease; }
+.week-kanban-mini.interactive:hover { border-color: var(--accent); transform: translateY(-1px); }
+.kanban-mini-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+.kanban-mini-col { padding: .6rem .55rem; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; gap: .15rem; }
+.kanban-mini-col.kanban-done { background: rgba(0,217,146,.08); border-color: rgba(0,217,146,.25); }
+.kanban-mini-col.kanban-doing { background: rgba(255,186,0,.08); border-color: rgba(255,186,0,.25); }
+.kanban-mini-count { font-size: 1.6rem; font-weight: 900; line-height: 1; letter-spacing: -.03em; }
+.kanban-mini-label { font-size: .72rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.kanban-mini-blocked { margin: 0; display: flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 700; color: var(--red); }
+
+/* Blocker toggle / banner (1:1 워크북) */
+.blocker-toggle { padding: .5rem .85rem; border-radius: 999px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); font-size: .8rem; font-weight: 800; cursor: pointer; transition: border-color .14s ease, color .14s ease, background .14s ease; }
+.blocker-toggle:hover { border-color: var(--red); color: var(--red); }
+.blocker-toggle.on { background: rgba(251,86,91,.12); color: var(--red); border-color: rgba(251,86,91,.5); }
+.blocker-banner { padding: .65rem .85rem; border-radius: var(--radius-md); border: 1px solid rgba(251,86,91,.4); background: rgba(251,86,91,.08); display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: .65rem; align-items: center; }
+.blocker-banner strong { color: var(--red); font-size: .88rem; }
+.blocker-banner input { padding: .45rem .6rem; border: 1px solid rgba(251,86,91,.3); border-radius: var(--radius-sm); background: var(--surface); font: inherit; }
+.blocker-banner small { color: var(--muted); font-size: .76rem; }
+
+/* Workbook progressive disclosure */
+.workbook-section { padding: .55rem .8rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.workbook-section + .workbook-section { margin-top: .65rem; }
+.workbook-section > summary { display: flex; align-items: center; justify-content: space-between; gap: .55rem; cursor: pointer; padding: .25rem 0; font-weight: 800; font-size: .95rem; }
+.workbook-section[open] > summary { margin-bottom: .65rem; padding-bottom: .55rem; border-bottom: 1px dashed var(--line); }
+
+/* Picker dot */
+.participant-picker .pill .dist-blocker-dot { margin-left: 0; }
+
+/* Section heading layout */
+.screen-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding-bottom: .9rem; border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
+.screen-heading h1 { margin: .15rem 0 .35rem; font-size: clamp(1.4rem, 2.6vw, 1.85rem); letter-spacing: -.04em; }
+.screen-heading p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; max-width: 60ch; }
+.screen-mode-pill { padding: .35rem .65rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: .76rem; font-weight: 800; flex-shrink: 0; }

@@ -8,6 +8,7 @@ type MaybeTicket = {
 type MaybeParticipant = {
   checklist?: unknown;
   weeklyReflection?: unknown;
+  blocker?: unknown;
 };
 type MaybeStateWithTickets = { tickets?: MaybeTicket[]; participants?: MaybeParticipant[] };
 
@@ -25,6 +26,10 @@ function ensureParticipantShape<T>(saved: T): T {
     }
     if (!next.weeklyReflection || typeof next.weeklyReflection !== 'object') {
       next.weeklyReflection = {};
+      changed = true;
+    }
+    if (!('blocker' in next)) {
+      next.blocker = null;
       changed = true;
     }
     if (changed) mutated = true;

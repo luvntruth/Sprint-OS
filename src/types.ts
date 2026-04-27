@@ -16,6 +16,11 @@ export type ChecklistState = Record<string, boolean>;
 export type WeekKey = 'week1' | 'week2' | 'week3' | 'wrapup';
 export type WeeklyReflection = Partial<Record<WeekKey, string>>;
 
+export interface ParticipantBlocker {
+  reason: string;
+  openedAt: string; // ISO date
+}
+
 export interface Sprint {
   id: string;
   title: string;
@@ -68,6 +73,7 @@ export interface Participant {
   facilitatorNote: FacilitatorNote;
   checklist: ChecklistState;
   weeklyReflection: WeeklyReflection;
+  blocker: ParticipantBlocker | null;
 }
 
 

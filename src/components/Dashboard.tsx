@@ -10,11 +10,15 @@ import {
 import { OursProgress, PhasePill } from './OursProgress';
 import { currentPhase, overallProgress } from '../lib/checklists';
 import { Onboarding } from './Onboarding';
+import { OursDistribution } from './OursDistribution';
+import { WeekKanbanMini } from './WeekKanbanMini';
 
 interface Props {
   state: AppState;
   setState: (state: AppState) => void;
   mode?: 'public' | 'admin';
+  setTab?: (tab: string) => void;
+  onJumpToParticipant?: (participantId: string) => void;
 }
 
 function participantActionForStage(stage: Stage) {
@@ -30,7 +34,7 @@ function participantActionForStage(stage: Stage) {
   };
 }
 
-export function Dashboard({ state, setState, mode = 'admin' }: Props) {
+export function Dashboard({ state, setState, mode = 'admin', setTab, onJumpToParticipant }: Props) {
   const summary = getPublicSummary(state);
   const visibleParticipants = state.participants.filter((p) => mode === 'admin' || p.id !== 'P-0');
   const participantTickets = state.tickets.filter((ticket) => ticket.owner === 'participant');
@@ -82,6 +86,24 @@ export function Dashboard({ state, setState, mode = 'admin' }: Props) {
           <p className="eyebrow">AX x HR 3주 실천 모임 진행판</p>
           <h1>{mode === 'admin' ? '공유 화면과 운영 입력을 한 곳에서 관리합니다' : '지금 어디에 있고, 무엇을 하면 되는지 확인합니다'}</h1>
           <p>{state.sprint.purpose}</p>
+        </div>
+      </section>
+
+      <section className="panel compact-panel cohort-flow-panel" aria-label="코호트 분포와 이번 단계">
+        <div className="section-head clean-head">
+          <div>
+            <p className="eyebrow">코호트 한눈에</p>
+            <h2>OURS 단계 분포 · 이번 주 흐름</h2>
+          </div>
+          <span>참가자 {visibleParticipants.length}명 · 평균 {Math.round(cohortOursRatio * 100)}%</span>
+        </div>
+        <div className="cohort-flow-grid">
+          <OursDistribution state={state} mode={mode} onJump={mode === 'admin' ? onJumpToParticipant : undefined} />
+          <WeekKanbanMini
+            tickets={dashboardTickets}
+            stage={state.sprint.currentStage}
+            onJump={setTab ? () => setTab('tickets') : undefined}
+          />
         </div>
       </section>
 
